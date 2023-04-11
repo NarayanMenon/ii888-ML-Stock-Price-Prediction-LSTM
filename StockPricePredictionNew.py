@@ -16,10 +16,12 @@ np.random.seed(7)
 # IMPORTING DATASET 
 dataset = pd.read_csv('AMZN.csv')
 df1=dataset.reset_index()['Close']
-
+df1["returns"] = df1.Close.pct_change()
+df1["log_returns"] = np.log(1 + df1.returns)
+df1.dropna(inplace = True)
 
 # PLOTTING ALL INDICATORS IN ONE PLOT
-plt.plot(df1)
+plt.plot(df1.log_returns)
 plt.show()
 
 # PREPARATION OF TIME SERIES DATASET
@@ -32,7 +34,7 @@ test_size=len(df1)-training_size
 train_data,test_data=df1[0:training_size,:],df1[training_size:len(df1),:1]
 print(train_data.shape,test_data.shape)
 # TIME-SERIES DATASET (FOR TIME T, VALUES FOR TIME T+1)
-time_step = 50
+time_step = 10
 X_train, y_train = pre.create_dataset(train_data, time_step)
 X_test, ytest = pre.create_dataset(test_data, time_step)
 print(X_train.shape), print(y_train.shape)
@@ -93,7 +95,7 @@ temp_input=temp_input[0].tolist()
 lst_output=[]
 n_steps=time_step
 i=0
-while(i<30):
+while(i<20):
     
     if(len(temp_input)>time_step):
         #print(temp_input)

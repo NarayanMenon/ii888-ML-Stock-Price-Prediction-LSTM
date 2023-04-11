@@ -1,6 +1,8 @@
 # IMPORTING IMPORTANT LIBRARIES
 import pandas as pd
+import datetime as dt
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import numpy as np 
 import math
 from sklearn.preprocessing import MinMaxScaler
@@ -14,8 +16,9 @@ import preprocessing as pre
 np.random.seed(7)
 
 # IMPORTING DATASET 
-dataset = pd.read_csv('AMZN.csv')
-df1=dataset.reset_index()['Close']
+dataset = pd.read_csv('SPX.csv',index_col='Date')
+dataset = dataset.loc[::-1].reset_index(drop=True)
+df1=dataset['Close']
 
 
 # PLOTTING ALL INDICATORS IN ONE PLOT
@@ -31,8 +34,10 @@ training_size=int(len(df1)*0.8)
 test_size=len(df1)-training_size
 train_data,test_data=df1[0:training_size,:],df1[training_size:len(df1),:1]
 print(train_data.shape,test_data.shape)
+
+
 # TIME-SERIES DATASET (FOR TIME T, VALUES FOR TIME T+1)
-time_step = 50
+time_step = 5
 X_train, y_train = pre.create_dataset(train_data, time_step)
 X_test, ytest = pre.create_dataset(test_data, time_step)
 print(X_train.shape), print(y_train.shape)
@@ -44,8 +49,8 @@ X_test = X_test.reshape(X_test.shape[0],X_test.shape[1] , 1)
 
 # LSTM MODEL
 model=Sequential()
-model.add(LSTM(50,return_sequences=True,input_shape=(time_step,1)))
-model.add(LSTM(50,return_sequences=True))
+model.add(LSTM(5,return_sequences=True,input_shape=(time_step,1)))
+model.add(LSTM(5,return_sequences=True))
 model.add(LSTM(50))
 model.add(Dense(20))
 model.add(Dense(1))
@@ -93,7 +98,7 @@ temp_input=temp_input[0].tolist()
 lst_output=[]
 n_steps=time_step
 i=0
-while(i<30):
+while(i<5):
     
     if(len(temp_input)>time_step):
         #print(temp_input)
